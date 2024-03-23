@@ -11,6 +11,7 @@ import Loader from "./component/Loader";
 import ErrorMsg from "./component/ErrorMsg";
 import MovieDetails from "./component/MovieDetails";
 import { useMovies } from "./component/useMovies";
+import { useLocalStorageState } from "./component/useLocalStorageState";
 import { MovieDetailsProps } from "./model/types";
 
 const NumOfResults: React.FC<{ movies: MovieDetailsProps[] }> = function ({
@@ -28,10 +29,12 @@ export default function App() {
   const [selectedID, setSelectedID] = useState<string>("");
 
   // lazy initial state => pass a callback function
-  const [watched, setWatched] = useState<MovieDetailsProps[]>(function () {
-    const storedValue = localStorage.getItem("watched");
-    return storedValue ? JSON.parse(storedValue) : [];
-  });
+  // const [watched, setWatched] = useState<MovieDetailsProps[]>(function () {
+  //   const storedValue = localStorage.getItem("watched");
+  //   return storedValue ? JSON.parse(storedValue) : [];
+  // });
+
+  const {watched, setWatched} = useLocalStorageState([], "watched")
 
   //useState(localStorage.getItem('watched'))
   // this will call localStorage function on every render => not GOOD
@@ -41,13 +44,6 @@ export default function App() {
     setWatched((watched) => [...watched, newMovie]);
   };
 
-  // store the watched to local storage
-  useEffect(
-    function () {
-      localStorage.setItem("watched", JSON.stringify(watched));
-    },
-    [watched]
-  );
   // useing custom hook
   const { movies, isLoading, error } = useMovies(query);
 
